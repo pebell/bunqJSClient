@@ -32,7 +32,7 @@ export default class Session {
     public publicKeyPem: string = null;
     public privateKey: any = null;
     public privateKeyPem: string = null;
-    public serverPublicKey: string = null;
+    public serverPublicKey: any = null;
     public serverPublicKeyPem: string = null;
 
     // installation info

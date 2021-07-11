@@ -1,17 +1,13 @@
-const forge = require("./CustomForge");
-import Logger from "../Helpers/Logger";
-
-const forgeSha256 = forge.sha256;
-const forgeUtil = forge.util;
-
+import Logger from '../Helpers/Logger';
+import { md, util, Encoding, pki } from 'node-forge';
 /**
  * Hashes a string using sha256
  * @param {string} string
  * @param {string} encoding = "raw"
  * @returns {Promise<string>}
  */
-export const stringToHash = async (string: string, encoding: string = "raw") => {
-    const messageDigest = forgeSha256.create();
+export const stringToHash = async (string: string, encoding: Encoding = 'raw') => {
+    const messageDigest = md.sha256.create();
     messageDigest.update(string, encoding);
     return messageDigest.digest().toHex();
 };
@@ -22,14 +18,14 @@ export const stringToHash = async (string: string, encoding: string = "raw") => 
  * @param publicKey
  * @returns {Promise<string>}
  */
-export const encryptString = async (data: string, publicKey: any, raw: boolean = false): Promise<string | any> => {
+export const encryptString = async (data: string, publicKey: pki.rsa.PublicKey, raw: boolean = false): Promise<string | any> => {
     // sign it with a server's public key
     const signatureBytes = publicKey.encrypt(data);
 
     if (raw) return signatureBytes;
 
     // encode to base 64 and return it
-    return forgeUtil.encode64(signatureBytes);
+    return util.encode64(signatureBytes);
 };
 
 /**
@@ -39,15 +35,15 @@ export const encryptString = async (data: string, publicKey: any, raw: boolean =
  * @param {string} encoding = "raw"
  * @returns {Promise<string>}
  */
-export const signString = async (data: string, privateKey: any, encoding: string = "raw") => {
+export const signString = async (data: string, privateKey: pki.rsa.PrivateKey, encoding: Encoding = 'raw') => {
     // create a new message digest for our string
-    const messageDigest = forgeSha256.create();
+    const messageDigest = md.sha256.create();
     messageDigest.update(data, encoding);
 
     // sign it with a private key
     const signatureBytes = privateKey.sign(messageDigest);
     // encode to base 64 and return it
-    return forgeUtil.encode64(signatureBytes);
+    return util.encode64(signatureBytes);
 };
 
 /**
@@ -58,17 +54,18 @@ export const signString = async (data: string, privateKey: any, encoding: string
  * @param {string} encoding = "raw"
  * @returns {Promise<string>}
  */
-export const verifyString = async (data: string, publicKey: any, signature: string, encoding: string = "raw") => {
+export const verifyString = async (data: string, publicKey: pki.rsa.PublicKey, signature: string, encoding: Encoding = 'raw') => {
     // create a new message digest for our string
-    const messageDigest = forgeSha256.create();
+    const messageDigest = md.sha256.create();
     messageDigest.update(data, encoding);
 
     try {
         // decode the base64 signature
-        const rawSignature = forgeUtil.decode64(signature);
+        const rawSignature = util.decode64(signature);
 
         // verify the signature with the public key
-        return publicKey.verify(messageDigest.digest().getBytes(), rawSignature);
+        const verified = publicKey.verify(messageDigest.digest().getBytes(), rawSignature);
+        return verified;
     } catch (ex) {
         Logger.debug(ex);
         return false;

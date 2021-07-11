@@ -1,9 +1,10 @@
-import { verifyString } from "../Crypto/Sha256";
-import BunqJSClient from "../BunqJSClient";
-import Session from "../Session";
-import LoggerInterface from "../Interfaces/LoggerInterface";
-import { arrayBufferToString, fixHeaderCase } from "../Helpers/Utils";
-import { BUNQ_SERVER_SIGNATURE_HEADER_KEY } from "../ApiAdapter";
+import { verifyString } from '../Crypto/Sha256';
+import BunqJSClient from '../BunqJSClient';
+import Session from '../Session';
+import LoggerInterface from '../Interfaces/LoggerInterface';
+import { arrayBufferToString, fixHeaderCase } from '../Helpers/Utils';
+import { BUNQ_SERVER_SIGNATURE_HEADER_KEY } from '../ApiAdapter';
+import { AxiosResponse } from 'axios';
 
 export default class VerifyResponseHandler {
     public Session: Session;
@@ -21,7 +22,7 @@ export default class VerifyResponseHandler {
      * @param response
      * @returns {Promise<boolean>}
      */
-    public async verifyResponse(response): Promise<boolean> {
+    public async verifyResponse(response: AxiosResponse<any>): Promise<boolean> {
         if (!this.Session.serverPublicKey) {
             // no public key so we can't verify, return true if we aren't installed yet
             return this.Session.installToken === null;
@@ -31,16 +32,16 @@ export default class VerifyResponseHandler {
         if (!response.status) response.status = 200;
         if (!response.headers) response.headers = {};
 
-        // create a list of headers
-        const headerStrings = [];
-        Object.keys(response.headers).map(headerKey => {
-            const headerKeyFixed = fixHeaderCase(headerKey);
+        // create a list of headers NO LONGER USED
+        // const headerStrings = [];
+        // Object.keys(response.headers).map(headerKey => {
+        //     const headerKeyFixed = fixHeaderCase(headerKey);
 
-            // only verify bunq headers and ignore the server signature
-            if (headerKeyFixed.includes("X-Bunq") && !headerKeyFixed.includes(BUNQ_SERVER_SIGNATURE_HEADER_KEY)) {
-                headerStrings.push(`${headerKeyFixed}: ${response.headers[headerKey]}`);
-            }
-        });
+        //     // only verify bunq headers and ignore the server signature
+        //     if (headerKeyFixed.includes("X-Bunq") && !headerKeyFixed.includes(BUNQ_SERVER_SIGNATURE_HEADER_KEY)) {
+        //         headerStrings.push(`${headerKeyFixed}: ${response.headers[headerKey]}`);
+        //     }
+        // });
 
         // serialize the data
         let data: string = "";

@@ -6,6 +6,7 @@ import LoggerInterface from "../Interfaces/LoggerInterface";
 import Request from "./Request";
 
 import ApiAdapterOptions from "../Types/ApiAdapterOptions";
+import { Encoding } from 'node-forge';
 
 export default class SignRequestHandler {
     public Session: Session;
@@ -43,7 +44,7 @@ export default class SignRequestHandler {
 
         // serialize the data
         let data: string | Buffer = "";
-        let dataEncoding = "raw";
+        let dataEncoding: Encoding = "raw";
         const appendDataWhitelist = ["POST", "PUT", "DELETE"];
         if (options.includesFile) {
             const requestData: Buffer = request.data;

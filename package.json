@@ -1,81 +1,82 @@
 {
-  "name": "@bunq-community/bunq-js-client",
-  "version": "1.1.2",
-  "license": "MIT",
-  "homepage": "https://github.com/bunqCommunity/bunqJSClient#readme",
-  "engines": {
-    "node": ">=10.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bunqCommunity/bunqJSClient.git"
-  },
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/bunqCommunity/bunqJSClient/issues"
-  },
-  "scripts": {
-    "build": "tsc --listFiles --newline lf",
-    "build:dev": "tsc -w --newline lf",
-    "test": "npm run test:prettier && npm run test:jest",
-    "posttest": "rm -r tests/custom-db/*",
-    "test:dev": "cross-env ENV_CI=true DEV_MODE=true jest --watch --coverage --config jest.config.js",
-    "test:jest": "cross-env ENV_CI=true jest --verbose --forceExit --coverage --config jest.config.js",
-    "test:prettier": "prettier-check \"+(tests|src|examples)/**/**.+(js|ts)\" --tab-width 4 --print-width 120",
-    "prettier": "./node_modules/.bin/prettier --tab-width 4 --print-width 120 --write \"+(tests|src|examples)/**/**.+(js|ts)\"",
-    "preversion": "rm -rf dist/* && npm run build"
-  },
-  "main": "./dist/BunqJSClient.js",
-  "types": "./dist/BunqJSClient.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
-  "dependencies": {
-    "awaiting": "^3.0.0",
-    "axios": "^0.21.1",
-    "loglevel": "^1.4.1",
-    "node-forge": "^0.10.0",
-    "socks-proxy-agent": "^4.0.2",
-    "store": "^2.0.12"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/plugin-proposal-do-expressions": "^7.0.0",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
-    "@babel/plugin-proposal-function-bind": "^7.0.0",
-    "@babel/plugin-proposal-function-sent": "^7.0.0",
-    "@babel/plugin-proposal-json-strings": "^7.0.0",
-    "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
-    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
-    "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
-    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@types/jest": "^21.1.8",
-    "@types/moxios": "^0.4.8",
-    "@types/node": "^8.10.38",
-    "@types/yargs": "^13.0.0",
-    "coveralls": "^3.0.0",
-    "cross-env": "^5.2.0",
-    "dotenv": "^6.0.0",
-    "es6-promise-promise": "^1.0.0",
-    "handlebars": "^4.7.2",
-    "jest": "^24.9.0",
-    "json-store": "^1.0.0",
-    "moxios": "^0.4.0",
-    "node-json-db": "^0.7.3",
-    "prettier": "^1.14.2",
-    "prettier-check": "^2.0.0",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.4.5"
-  }
+    "name": "@bunq-community/bunq-js-client",
+    "version": "1.1.2",
+    "license": "MIT",
+    "homepage": "https://github.com/bunqCommunity/bunqJSClient#readme",
+    "engines": {
+        "node": ">=10.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bunqCommunity/bunqJSClient.git"
+    },
+    "author": "",
+    "bugs": {
+        "url": "https://github.com/bunqCommunity/bunqJSClient/issues"
+    },
+    "scripts": {
+        "build": "tsc --listFiles --newline lf",
+        "build:dev": "tsc -w --newline lf",
+        "test": "npm run test:prettier && npm run test:jest",
+        "posttest": "rm -r tests/custom-db/*",
+        "test:dev": "cross-env ENV_CI=true DEV_MODE=true jest --watch --coverage --config jest.config.js",
+        "test:jest": "cross-env ENV_CI=true jest --verbose --forceExit --coverage --config jest.config.js",
+        "test:prettier": "prettier-check \"+(tests|src|examples)/**/**.+(js|ts)\" --tab-width 4 --print-width 120",
+        "prettier": "./node_modules/.bin/prettier --tab-width 4 --print-width 120 --write \"+(tests|src|examples)/**/**.+(js|ts)\"",
+        "preversion": "rm -rf dist/* && npm run build"
+    },
+    "main": "./dist/BunqJSClient.js",
+    "types": "./dist/BunqJSClient.d.ts",
+    "files": [
+        "dist/**/*"
+    ],
+    "dependencies": {
+        "@types/node-forge": "^0.10.1",
+        "awaiting": "^3.0.0",
+        "axios": "^0.21.1",
+        "loglevel": "^1.4.1",
+        "node-forge": "^0.10.0",
+        "socks-proxy-agent": "^4.0.2",
+        "store": "^2.0.12"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.0.0",
+        "@babel/core": "^7.0.0",
+        "@babel/plugin-proposal-class-properties": "^7.0.0",
+        "@babel/plugin-proposal-decorators": "^7.0.0",
+        "@babel/plugin-proposal-do-expressions": "^7.0.0",
+        "@babel/plugin-proposal-export-default-from": "^7.0.0",
+        "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
+        "@babel/plugin-proposal-function-bind": "^7.0.0",
+        "@babel/plugin-proposal-function-sent": "^7.0.0",
+        "@babel/plugin-proposal-json-strings": "^7.0.0",
+        "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
+        "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
+        "@babel/plugin-proposal-numeric-separator": "^7.0.0",
+        "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+        "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+        "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
+        "@babel/plugin-proposal-throw-expressions": "^7.0.0",
+        "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+        "@babel/plugin-syntax-import-meta": "^7.0.0",
+        "@babel/plugin-transform-runtime": "^7.0.0",
+        "@babel/preset-env": "^7.0.0",
+        "@types/jest": "^21.1.8",
+        "@types/moxios": "^0.4.8",
+        "@types/node": "^8.10.38",
+        "@types/yargs": "^13.0.0",
+        "coveralls": "^3.0.0",
+        "cross-env": "^5.2.0",
+        "dotenv": "^6.0.0",
+        "es6-promise-promise": "^1.0.0",
+        "handlebars": "^4.7.2",
+        "jest": "^24.9.0",
+        "json-store": "^1.0.0",
+        "moxios": "^0.4.0",
+        "node-json-db": "^0.7.3",
+        "prettier": "^1.14.2",
+        "prettier-check": "^2.0.0",
+        "ts-jest": "^24.0.2",
+        "typescript": "^3.4.5"
+    }
 }

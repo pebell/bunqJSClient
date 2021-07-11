@@ -139,7 +139,15 @@ export default class ApiAdapter {
     ) {
         // default to standard axios instance
         if (!axiosInstance) axiosInstance = axios;
-        if (!options.axiosOptions) options.axiosOptions = {};
+
+        // Add an identity transform to axios options, to prevent it from JSON.parsing the response data.
+        // When it does this, we need to JSON.stringify it again in order to check the server signing, and
+        // something changes in the process so that many responses appear invalid.
+        options.axiosOptions = {
+            ...options.axiosOptions,
+            transformResponse: (r) => r,
+        };
+
 
         const paramsString = options.axiosOptions.params ? JSON.stringify(options.axiosOptions.params) : "";
         this.logger.debug(`${method}: ${url} ${paramsString}`);
