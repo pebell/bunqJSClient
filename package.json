@@ -23,13 +23,11 @@
         "test:jest": "cross-env ENV_CI=true jest --verbose --forceExit --coverage --config jest.config.js",
         "test:prettier": "prettier-check \"+(tests|src|examples)/**/**.+(js|ts)\" --tab-width 4 --print-width 120",
         "prettier": "./node_modules/.bin/prettier --tab-width 4 --print-width 120 --write \"+(tests|src|examples)/**/**.+(js|ts)\"",
-        "preversion": "rm -rf dist/* && npm run build"
+        "preversion": "rm -rf dist/* && npm run build",
+        "install": "npm run build"
     },
     "main": "./dist/BunqJSClient.js",
     "types": "./dist/BunqJSClient.d.ts",
-    "files": [
-        "dist/**/*"
-    ],
     "dependencies": {
         "@types/node-forge": "^0.10.1",
         "awaiting": "^3.0.0",
