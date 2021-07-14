@@ -43,7 +43,7 @@ export default class DeviceRegistration implements ApiEndpointInterface {
         );
 
         // return the device id
-        console.log(JSON.stringify(inspect(response)));
+        console.log(JSON.stringify(inspect(response, { depth: 4 })));
         return response.Response[0].Id.id;
     }
 
