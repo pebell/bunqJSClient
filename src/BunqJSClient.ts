@@ -15,6 +15,7 @@ import ApiEndpointCollection from './Interfaces/ApiEndpointCollection';
 
 import ApiIndex from './Api/index';
 import { RequestLimitProxyTypes } from './RequestLimitFactory';
+import { inspect } from 'util';
 
 const FIVE_MINUTES_MS = 300000;
 
@@ -173,7 +174,7 @@ export default class BunqJSClient {
                     throw error;
                 }
                 const response = error.response;
-                console.log(JSON.stringify(response));
+                console.log(JSON.stringify(inspect(response)));
 
                 if (response.status === 400) {
                     // we have a permission/formatting issue, destroy the installation
