@@ -1,6 +1,7 @@
-import ApiAdapter from "../ApiAdapter";
-import Session from "../Session";
-import ApiEndpointInterface from "../Interfaces/ApiEndpointInterface";
+import ApiAdapter from '../ApiAdapter';
+import Session from '../Session';
+import ApiEndpointInterface from '../Interfaces/ApiEndpointInterface';
+import { inspect } from 'util';
 
 export default class DeviceRegistration implements ApiEndpointInterface {
     ApiAdapter: ApiAdapter;
@@ -19,29 +20,30 @@ export default class DeviceRegistration implements ApiEndpointInterface {
      * @param options
      * @returns {Promise<any>}
      */
-    public async add(options: any = { description: "My Device", permitted_ips: [] }) {
+    public async add(options: any = { description: 'My Device', permitted_ips: [] }) {
         const postData = {
             description: options.description,
-            secret: this.Session.apiKey
+            secret: this.Session.apiKey,
         };
         if (options.permitted_ips.length > 0) {
-            postData["permitted_ips"] = options.permitted_ips;
+            postData['permitted_ips'] = options.permitted_ips;
         }
 
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/device-server", "POST");
-        const response = await limiter.run(async axiosClient =>
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/device-server', 'POST');
+        const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.post(
-                "/v1/device-server",
+                '/v1/device-server',
                 postData,
                 {},
                 {
-                    skipSessionCheck: true
+                    skipSessionCheck: true,
                 },
                 axiosClient
             )
         );
 
         // return the device id
+        console.log(JSON.stringify(inspect(response)));
         return response.Response[0].Id.id;
     }
 
@@ -56,10 +58,8 @@ export default class DeviceRegistration implements ApiEndpointInterface {
             options.deviceId = this.Session.deviceId;
         }
 
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/device-server", "GET");
-        const response = await limiter.run(async axiosClient =>
-            this.ApiAdapter.get(`/v1/device-server/${options.deviceId}`, {}, {}, axiosClient)
-        );
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/device-server', 'GET');
+        const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server/${options.deviceId}`, {}, {}, axiosClient));
 
         // return the device id
         return response.Response[0].Id.id;
