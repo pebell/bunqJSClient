@@ -1,20 +1,20 @@
-import axios from "axios";
+import axios from 'axios';
 
-import Logger from "./Helpers/Logger";
-import ErrorCodes from "./Helpers/ErrorCodes";
-import { publicKeyFromPem } from "./Crypto/Rsa";
-import { validateKey } from "./Crypto/Aes";
+import Logger from './Helpers/Logger';
+import ErrorCodes from './Helpers/ErrorCodes';
+import { publicKeyFromPem } from './Crypto/Rsa';
+import { validateKey } from './Crypto/Aes';
 
-import ApiAdapter from "./ApiAdapter";
-import Session from "./Session";
-import LocalstorageStore from "./Stores/LocalstorageStore";
+import ApiAdapter from './ApiAdapter';
+import Session from './Session';
+import LocalstorageStore from './Stores/LocalstorageStore';
 
-import StorageInteface from "./Interfaces/StorageInterface";
-import LoggerInterface from "./Interfaces/LoggerInterface";
-import ApiEndpointCollection from "./Interfaces/ApiEndpointCollection";
+import StorageInteface from './Interfaces/StorageInterface';
+import LoggerInterface from './Interfaces/LoggerInterface';
+import ApiEndpointCollection from './Interfaces/ApiEndpointCollection';
 
-import ApiIndex from "./Api/index";
-import { RequestLimitProxyTypes } from "./RequestLimitFactory";
+import ApiIndex from './Api/index';
+import { RequestLimitProxyTypes } from './RequestLimitFactory';
 
 const FIVE_MINUTES_MS = 300000;
 
@@ -56,9 +56,9 @@ export default class BunqJSClient {
      */
     constructor(storageInterface: StorageInteface | false = false, loggerInterface: LoggerInterface = Logger) {
         if (storageInterface === false) {
-            if (typeof navigator === "undefined") {
+            if (typeof navigator === 'undefined') {
                 // NodeJS environment with no custom store defined
-                throw new Error("No custom storageInterface was defined in the constructor!");
+                throw new Error('No custom storageInterface was defined in the constructor!');
             }
 
             this.storageInterface = LocalstorageStore();
@@ -84,12 +84,12 @@ export default class BunqJSClient {
     public async run(
         apiKey: string | false,
         allowedIps: string[] = [],
-        environment: string = "SANDBOX",
+        environment: string = 'SANDBOX',
         encryptionKey: string | boolean = false,
         bitSize: number = 2048,
         ignoreCi: boolean = false
     ) {
-        this.logger.debug("bunqJSClient run");
+        this.logger.debug('bunqJSClient run');
 
         this.apiKey = apiKey;
 
@@ -129,9 +129,7 @@ export default class BunqJSClient {
         if (this.Session.verifyInstallation() === false) {
             // check if Session is ready to execute the request
             if (!this.Session.publicKey) {
-                throw new Error(
-                    "No public key is set yet, make sure you setup an encryption key with BunqJSClient->run()"
-                );
+                throw new Error('No public key is set yet, make sure you setup an encryption key with BunqJSClient->run()');
             }
 
             const response = await this.api.installation.add();
@@ -156,12 +154,12 @@ export default class BunqJSClient {
      * @param {boolean} ignoreCi - Only used for CI environments, do not use otherwise
      * @returns {Promise<boolean>}
      */
-    public async registerDevice(deviceName = "My Device", bitSize = 2048, ignoreCi = false) {
+    public async registerDevice(deviceName = 'My Device', bitSize = 2048, ignoreCi = false) {
         if (this.Session.verifyDeviceInstallation() === false) {
             try {
                 const deviceId = await this.api.deviceRegistration.add({
                     description: deviceName,
-                    permitted_ips: this.Session.allowedIps
+                    permitted_ips: this.Session.allowedIps,
                 });
 
                 // update the session properties
@@ -170,10 +168,12 @@ export default class BunqJSClient {
                 // update storage
                 await this.Session.storeSession();
             } catch (error) {
+                console.log('SOMETHING WENT WRONG IN BunqJSClient.registerDevice');
                 if (!error.response) {
                     throw error;
                 }
                 const response = error.response;
+                console.log(JSON.stringify(response));
 
                 if (response.status === 400) {
                     // we have a permission/formatting issue, destroy the installation
@@ -230,7 +230,7 @@ export default class BunqJSClient {
     private async generateSession(): Promise<boolean> {
         let response = null;
         try {
-            this.logger.debug(" === Attempting to fetch session");
+            this.logger.debug(' === Attempting to fetch session');
 
             response = await this.api.sessionServer.add();
         } catch (error) {
@@ -238,13 +238,13 @@ export default class BunqJSClient {
                 const responseError = error.response.data.Error[0];
                 const description = responseError.error_description;
 
-                this.logger.error("bunq API error: " + description);
+                this.logger.error('bunq API error: ' + description);
 
-                if (description === "Authentication token already has a user session.") {
+                if (description === 'Authentication token already has a user session.') {
                     // add custom error code
                     throw {
                         errorCode: this.errorCodes.INSTALLATION_HAS_SESSION,
-                        error: error
+                        error: error,
                     };
                 }
             }
@@ -253,10 +253,10 @@ export default class BunqJSClient {
             throw error;
         }
 
-        this.logger.debug("response.token.created:" + response.token.created);
+        this.logger.debug('response.token.created:' + response.token.created);
 
         // based on account setting we set a expire date
-        const createdDate = new Date(response.token.created + " UTC");
+        const createdDate = new Date(response.token.created + ' UTC');
         let sessionTimeout;
 
         // parse the correct user info from response
@@ -266,9 +266,7 @@ export default class BunqJSClient {
         if (userInfoParsed.isOAuth === false) {
             // get the session timeout
             sessionTimeout = userInfoParsed.info.session_timeout;
-            this.logger.debug(
-                "Received userInfoParsed.info.session_timeout from api: " + userInfoParsed.info.session_timeout
-            );
+            this.logger.debug('Received userInfoParsed.info.session_timeout from api: ' + userInfoParsed.info.session_timeout);
 
             // set isOAuth to false
             this.Session.isOAuthKey = false;
@@ -292,7 +290,7 @@ export default class BunqJSClient {
         this.Session.sessionToken = response.token.token;
         this.Session.sessionTokenId = response.token.id;
 
-        this.logger.debug("calculated expireDate: " + createdDate + " current date: " + new Date());
+        this.logger.debug('calculated expireDate: ' + createdDate + ' current date: ' + new Date());
 
         // update storage
         await this.Session.storeSession();
@@ -310,7 +308,7 @@ export default class BunqJSClient {
      */
     public async changeEncryptionKey(encryptionKey: string): Promise<boolean> {
         if (!validateKey(encryptionKey)) {
-            throw new Error("Invalid EAS key given! Invalid characters or length (16,24,32 length)");
+            throw new Error('Invalid EAS key given! Invalid characters or length (16,24,32 length)');
         }
 
         // change the encryption key
@@ -333,10 +331,7 @@ export default class BunqJSClient {
         // get the session timeout from request_by_user
         const sessionTimeout = requestedByUserParsed.info.session_timeout;
 
-        this.logger.debug(
-            "Received requestedByUserParsed.info.session_timeout from api: " +
-                requestedByUserParsed.info.session_timeout
-        );
+        this.logger.debug('Received requestedByUserParsed.info.session_timeout from api: ' + requestedByUserParsed.info.session_timeout);
 
         // set user id if none is set
         if (!grantedByUserParsed.info.id) {
@@ -347,7 +342,7 @@ export default class BunqJSClient {
         this.Session.isOAuthKey = true;
 
         // set user info for granted by user
-        this.Session.userInfo["UserApiKey"] = userInfoParsed.info;
+        this.Session.userInfo['UserApiKey'] = userInfoParsed.info;
 
         return sessionTimeout;
     }
@@ -357,10 +352,10 @@ export default class BunqJSClient {
      * @returns {Promise<any>}
      */
     public async createCredentials() {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/credential-password-ip-request", "POST");
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/credential-password-ip-request', 'POST');
 
         // send a unsigned request to the endpoint to create a new credential password ip
-        const response = await limiter.run(async axiosClient =>
+        const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.post(
                 `https://api.tinker.bunq.com/v1/credential-password-ip-request`,
                 {},
@@ -368,7 +363,7 @@ export default class BunqJSClient {
                 {
                     disableVerification: true,
                     disableSigning: true,
-                    skipSessionCheck: true
+                    skipSessionCheck: true,
                 }
             )
         );
@@ -382,17 +377,17 @@ export default class BunqJSClient {
      * @returns {Promise<any>}
      */
     public async checkCredentialStatus(uuid: string) {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/credential-password-ip-request", "GET");
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/credential-password-ip-request', 'GET');
 
         // send a unsigned request to the endpoint to create a new credential password ip with the uuid
-        const response = await limiter.run(async axiosClient =>
+        const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.get(
                 `https://api.tinker.bunq.com/v1/credential-password-ip-request/${uuid}`,
                 {},
                 {
                     disableVerification: true,
                     disableSigning: true,
-                    skipSessionCheck: true
+                    skipSessionCheck: true,
                 }
             )
         );
@@ -418,20 +413,20 @@ export default class BunqJSClient {
         code: string,
         state: string | false = false,
         sandbox: boolean = false,
-        grantType: string = "authorization_code"
+        grantType: string = 'authorization_code'
     ): Promise<string> {
         const url = this.formatOAuthKeyExchangeUrl(clientId, clientSecret, redirectUri, code, sandbox, grantType);
 
         // send the request
         const response = await axios({
-            method: "POST",
-            url: url
+            method: 'POST',
+            url: url,
         });
         const data = response.data;
 
         // check if a state has to be checked and validate it
         if (state && state !== data.state) {
-            throw new Error("Given state does not match token exchange state!");
+            throw new Error('Given state does not match token exchange state!');
         }
 
         return data.access_token;
@@ -445,22 +440,12 @@ export default class BunqJSClient {
      * @param {boolean} sandbox
      * @returns {string}
      */
-    public formatOAuthAuthorizationRequestUrl(
-        clientId: string,
-        redirectUri: string,
-        state: string | false = false,
-        sandbox: boolean = false
-    ): string {
-        const stateParam = state ? `&state=${state}` : "";
+    public formatOAuthAuthorizationRequestUrl(clientId: string, redirectUri: string, state: string | false = false, sandbox: boolean = false): string {
+        const stateParam = state ? `&state=${state}` : '';
 
-        const baseUrl = sandbox ? "https://oauth.sandbox.bunq.com" : "https://oauth.bunq.com";
+        const baseUrl = sandbox ? 'https://oauth.sandbox.bunq.com' : 'https://oauth.bunq.com';
 
-        return (
-            `${baseUrl}/auth?response_type=code&` +
-            `client_id=${clientId}&` +
-            `redirect_uri=${redirectUri}` +
-            stateParam
-        );
+        return `${baseUrl}/auth?response_type=code&` + `client_id=${clientId}&` + `redirect_uri=${redirectUri}` + stateParam;
     }
 
     /**
@@ -479,9 +464,9 @@ export default class BunqJSClient {
         redirectUri: string,
         code: string,
         sandbox: boolean = false,
-        grantType: string = "authorization_code"
+        grantType: string = 'authorization_code'
     ) {
-        const baseUrl = sandbox ? "https://api-oauth.sandbox.bunq.com" : "https://api.oauth.bunq.com";
+        const baseUrl = sandbox ? 'https://api-oauth.sandbox.bunq.com' : 'https://api.oauth.bunq.com';
 
         return (
             `${baseUrl}/v1/token?` +
@@ -497,7 +482,7 @@ export default class BunqJSClient {
      * Sets an automatic timer to keep the session alive when possible
      */
     public setExpiryTimer(deprecatedParameter = false, ignoreCi = false) {
-        if (typeof process !== "undefined" && process.env.ENV_CI === "true" && ignoreCi !== true) {
+        if (typeof process !== 'undefined' && process.env.ENV_CI === 'true' && ignoreCi !== true) {
             // disable in CI
             return false;
         }
@@ -544,11 +529,11 @@ export default class BunqJSClient {
 
         // update users, don't wait for it to finish
         this.getUsers(true)
-            .then(users => {
+            .then((users) => {
                 // do nothing
-                this.logger.debug("Triggered session refresh");
+                this.logger.debug('Triggered session refresh');
             })
-            .catch(error => {
+            .catch((error) => {
                 // log the error
                 this.logger.error(error);
             });
@@ -565,9 +550,7 @@ export default class BunqJSClient {
     public calculateSessionExpiry(shortTimeout = false) {
         // if shortTimeout is set maximize the expiry to 5 minutes
         if (shortTimeout) {
-            return !this.Session.sessionTimeout || this.Session.sessionTimeout > FIVE_MINUTES_MS
-                ? FIVE_MINUTES_MS
-                : this.Session.sessionTimeout;
+            return !this.Session.sessionTimeout || this.Session.sessionTimeout > FIVE_MINUTES_MS ? FIVE_MINUTES_MS : this.Session.sessionTimeout;
         }
 
         const currentTime = new Date();
@@ -579,11 +562,7 @@ export default class BunqJSClient {
      * @returns {Promise<void>}
      */
     public async destroySession() {
-        if (
-            this.Session.verifyInstallation() &&
-            this.Session.verifyDeviceInstallation() &&
-            this.Session.verifySessionInstallation()
-        ) {
+        if (this.Session.verifyInstallation() && this.Session.verifyDeviceInstallation() && this.Session.verifySessionInstallation()) {
             // we have a valid installation, try to delete the remote session
             try {
                 await this.api.sessionServer.delete();
@@ -668,31 +647,29 @@ export default class BunqJSClient {
         if (userInfo.UserCompany !== undefined) {
             return {
                 info: userInfo.UserCompany,
-                type: "UserCompany",
-                isOAuth: false
+                type: 'UserCompany',
+                isOAuth: false,
             };
         } else if (userInfo.UserPerson !== undefined) {
             return {
                 info: userInfo.UserPerson,
-                type: "UserPerson",
-                isOAuth: false
+                type: 'UserPerson',
+                isOAuth: false,
             };
         } else if (userInfo.UserLight !== undefined) {
             return {
                 info: userInfo.UserLight,
-                type: "UserLight",
-                isOAuth: false
+                type: 'UserLight',
+                isOAuth: false,
             };
         } else if (userInfo.UserApiKey !== undefined) {
             return {
                 info: userInfo.UserApiKey,
-                type: "UserApiKey",
-                isOAuth: true
+                type: 'UserApiKey',
+                isOAuth: true,
             };
         }
 
-        throw new Error(
-            "No supported account type found! (Not one of UserLight, UserPerson, UserApiKey or UserCompany)"
-        );
+        throw new Error('No supported account type found! (Not one of UserLight, UserPerson, UserApiKey or UserCompany)');
     }
 }
