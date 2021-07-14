@@ -35,7 +35,8 @@
         "loglevel": "^1.4.1",
         "node-forge": "^0.10.0",
         "socks-proxy-agent": "^4.0.2",
-        "store": "^2.0.12"
+        "store": "^2.0.12",
+        "typescript": "^3.4.5"
     },
     "devDependencies": {
         "@babel/cli": "^7.0.0",
@@ -74,7 +75,6 @@
         "node-json-db": "^0.7.3",
         "prettier": "^1.14.2",
         "prettier-check": "^2.0.0",
-        "ts-jest": "^24.0.2",
-        "typescript": "^3.4.5"
+        "ts-jest": "^24.0.2"
     }
 }
