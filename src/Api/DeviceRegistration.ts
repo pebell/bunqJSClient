@@ -52,16 +52,24 @@ export default class DeviceRegistration implements ApiEndpointInterface {
      * @param options
      * @returns {Promise<any>}
      */
-    public async get(options: any = { deviceId: null }) {
-        if (options.deviceId === null) {
+    public async get(options?: any) {
+        if (options && options.deviceId === null) {
             // if none is set we default to our current deviceId
             options.deviceId = this.Session.deviceId;
         }
 
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/device-server', 'GET');
-        const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server/${options.deviceId}`, {}, {}, axiosClient));
 
-        // return the device id
-        return response.Response[0].Id.id;
+        if (options) {
+            const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server/${options.deviceId}`, {}, {}, axiosClient));
+            console.log(response.Response[0]);
+            // return the device id
+            return response.Response[0].DeviceServer.id;
+        } else {
+            const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server`, {}, {}, axiosClient));
+            console.log(response.Response);
+            // return the device id
+            return response.Response;
+        }
     }
 }
