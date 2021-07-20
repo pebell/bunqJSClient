@@ -1,46 +1,50 @@
-import AttachmentContent from "./AttachmentContent";
-import AttachmentPublic from "./AttachmentPublic";
-import Avatar from "./Avatar";
-import BillingContractSubscription from "./BillingContractSubscription";
-import BunqMeTabs from "./BunqMeTabs";
-import Card from "./Card";
-import CardBatch from "./CardBatch";
-import CardCvc2 from "./CardCvc2";
-import CardDebit from "./CardDebit";
-import CardName from "./CardName";
-import CredentialPasswordIp from "./CredentialPasswordIp";
-import CustomerStatementExport from "./CustomerStatementExport";
-import CustomerStatementExportContent from "./CustomerStatementExportContent";
-import DeviceRegistration from "./DeviceRegistration";
-import DraftPayment from "./DraftPayment";
-import Event from "./Event";
-import Installation from "./Installation";
-import Invoice from "./Invoice";
-import Ip from "./Ip";
-import MasterCardAction from "./MasterCardAction";
-import MonetaryAccount from "./MonetaryAccount";
-import MonetaryAccountBank from "./MonetaryAccountBank";
-import MonetaryAccountJoint from "./MonetaryAccountJoint";
-import MonetaryAccountSavings from "./MonetaryAccountSavings";
-import NoteAttachment from "./NoteAttachment";
-import NoteText from "./NoteText";
-import Payment from "./Payment";
-import PaymentBatch from "./PaymentBatch";
-import RequestInquiry from "./RequestInquiry";
-import RequestInquiryBatch from "./RequestInquiryBatch";
-import RequestResponse from "./RequestResponse";
-import SandboxUser from "./SandboxUser";
-import Schedule from "./Schedule";
-import SchedulePayment from "./SchedulePayment";
-import SchedulePaymentBatch from "./SchedulePaymentBatch";
-import SessionServer from "./SessionServer";
-import ShareInviteMonetaryAccountInquiry from "./ShareInviteMonetaryAccountInquiry";
-import ShareInviteMonetaryAccountResponse from "./ShareInviteMonetaryAccountResponse";
-import User from "./User";
-import UserCompany from "./UserCompany";
-import UserPerson from "./UserPerson";
+import ApiAdapter from '../ApiAdapter';
+import ApiEndpointCollection from '../Interfaces/ApiEndpointCollection';
+import AttachmentContent from './AttachmentContent';
+import AttachmentPublic from './AttachmentPublic';
+import Avatar from './Avatar';
+import BillingContractSubscription from './BillingContractSubscription';
+import BunqMeTabs from './BunqMeTabs';
+import Card from './Card';
+import CardBatch from './CardBatch';
+import CardCvc2 from './CardCvc2';
+import CardDebit from './CardDebit';
+import CardName from './CardName';
+import CredentialPasswordIp from './CredentialPasswordIp';
+import CustomerStatementExport from './CustomerStatementExport';
+import CustomerStatementExportContent from './CustomerStatementExportContent';
+import DeviceRegistration from './DeviceRegistration';
+import DraftPayment from './DraftPayment';
+import DraftShareInviteBankAPI from './DraftShareInviteBankAPI';
+import Event from './Event';
+import Installation from './Installation';
+import Invoice from './Invoice';
+import Ip from './Ip';
+import MasterCardAction from './MasterCardAction';
+import MonetaryAccount from './MonetaryAccount';
+import MonetaryAccountBank from './MonetaryAccountBank';
+import MonetaryAccountJoint from './MonetaryAccountJoint';
+import MonetaryAccountSavings from './MonetaryAccountSavings';
+import NoteAttachment from './NoteAttachment';
+import NoteText from './NoteText';
+import NotificationFilterAPI from './NotificationFilterAPI';
+import Payment from './Payment';
+import PaymentBatch from './PaymentBatch';
+import RequestInquiry from './RequestInquiry';
+import RequestInquiryBatch from './RequestInquiryBatch';
+import RequestResponse from './RequestResponse';
+import SandboxUser from './SandboxUser';
+import Schedule from './Schedule';
+import SchedulePayment from './SchedulePayment';
+import SchedulePaymentBatch from './SchedulePaymentBatch';
+import SessionServer from './SessionServer';
+import ShareInviteMonetaryAccountInquiry from './ShareInviteMonetaryAccountInquiry';
+import ShareInviteMonetaryAccountResponse from './ShareInviteMonetaryAccountResponse';
+import User from './User';
+import UserCompany from './UserCompany';
+import UserPerson from './UserPerson';
 
-export default bunqJSClient => ({
+export default (bunqJSClient): ApiEndpointCollection => ({
     attachmentContent: new AttachmentContent(bunqJSClient.ApiAdapter),
     attachmentPublic: new AttachmentPublic(bunqJSClient.ApiAdapter),
     avatar: new Avatar(bunqJSClient.ApiAdapter),
@@ -56,6 +60,7 @@ export default bunqJSClient => ({
     customerStatementExportContent: new CustomerStatementExportContent(bunqJSClient.ApiAdapter),
     deviceRegistration: new DeviceRegistration(bunqJSClient.ApiAdapter),
     draftPayment: new DraftPayment(bunqJSClient.ApiAdapter),
+    draftShareInviteBank: new DraftShareInviteBankAPI(bunqJSClient.ApiAdapter),
     event: new Event(bunqJSClient.ApiAdapter),
     installation: new Installation(bunqJSClient.ApiAdapter),
     invoice: new Invoice(bunqJSClient.ApiAdapter),
@@ -67,6 +72,7 @@ export default bunqJSClient => ({
     monetaryAccountSavings: new MonetaryAccountSavings(bunqJSClient.ApiAdapter),
     noteAttachment: new NoteAttachment(bunqJSClient.ApiAdapter),
     noteText: new NoteText(bunqJSClient.ApiAdapter),
+    notificationFilter: new NotificationFilterAPI(bunqJSClient.ApiAdapter),
     payment: new Payment(bunqJSClient.ApiAdapter),
     paymentBatch: new PaymentBatch(bunqJSClient.ApiAdapter),
     requestInquiry: new RequestInquiry(bunqJSClient.ApiAdapter),
@@ -81,5 +87,5 @@ export default bunqJSClient => ({
     shareInviteMonetaryAccountResponse: new ShareInviteMonetaryAccountResponse(bunqJSClient.ApiAdapter),
     user: new User(bunqJSClient.ApiAdapter),
     userCompany: new UserCompany(bunqJSClient.ApiAdapter),
-    userPerson: new UserPerson(bunqJSClient.ApiAdapter)
+    userPerson: new UserPerson(bunqJSClient.ApiAdapter),
 });

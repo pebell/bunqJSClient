@@ -1,17 +1,18 @@
-import { createKeyPair, keyPairToPem, publicKeyFromPem, privateKeyFromPem } from "./Crypto/Rsa";
-import { encryptString, decryptString, validateKey } from "./Crypto/Aes";
-import { derivePasswordKey } from "./Crypto/Pbkdf2";
-import StorageInterface from "./Interfaces/StorageInterface";
-import LoggerInterface from "./Interfaces/LoggerInterface";
+import { createKeyPair, keyPairToPem, publicKeyFromPem, privateKeyFromPem } from './Crypto/Rsa';
+import { encryptString, decryptString, validateKey } from './Crypto/Aes';
+import { derivePasswordKey } from './Crypto/Pbkdf2';
+import StorageInterface from './Interfaces/StorageInterface';
+import LoggerInterface from './Interfaces/LoggerInterface';
+import UserPerson from './Types/UserPerson';
 
 type UrlEnviromentType = {
     [key: string]: string;
 };
 
-export const ALLOWED_ENVIROMENTS: string[] = ["SANDBOX", "PRODUCTION"];
+export const ALLOWED_ENVIROMENTS: string[] = ['SANDBOX', 'PRODUCTION'];
 export const URL_ENVIROMENTS: UrlEnviromentType = {
-    SANDBOX: "https://public-api.sandbox.bunq.com",
-    PRODUCTION: "https://api.bunq.com"
+    SANDBOX: 'https://public-api.sandbox.bunq.com',
+    PRODUCTION: 'https://api.bunq.com',
 };
 
 export default class Session {
@@ -48,7 +49,7 @@ export default class Session {
     public sessionExpiryTime?: Date = null;
     public sessionTimeout: number = 0;
     public sessionExpiryTimeChecker?: any = null;
-    public userInfo: any = {};
+    public userInfo: { UserPerson: UserPerson } = null;
 
     // key used to store our data
     public storageKeyLocation: string;
@@ -58,7 +59,7 @@ export default class Session {
         this.storageInterface = storageInterface;
         this.logger = loggerInterface;
 
-        this.environmentType = "SANDBOX";
+        this.environmentType = 'SANDBOX';
     }
 
     /**
@@ -74,13 +75,13 @@ export default class Session {
     public async setup(
         apiKey: string | false,
         allowedIps: string[] = [],
-        environment: string = "SANDBOX",
+        environment: string = 'SANDBOX',
         encryptionKey: string | boolean = false,
         bitSize = 2048,
         ignoreCi = false
     ) {
         if (this.apiKey && this.apiKey !== apiKey) {
-            this.logger.debug("current apiKey set and changed");
+            this.logger.debug('current apiKey set and changed');
         }
         if (this.environment !== null && environment !== this.environment && !!apiKey) {
             // we can't keep the session data if the environment changes
@@ -88,7 +89,7 @@ export default class Session {
         }
 
         // create a unique identifier for this api key
-        if (typeof apiKey === "string") {
+        if (typeof apiKey === 'string') {
             const derivedApiKey = await derivePasswordKey(apiKey.substring(0, 8), apiKey.substring(8, 16), 10000);
 
             // if already set and changed, we reset data stored in memory
@@ -110,7 +111,7 @@ export default class Session {
 
         // validate the key
         if (!validateKey(encryptionKey)) {
-            throw new Error("Invalid EAS key given! Invalid characters or length (16,24,32 length)");
+            throw new Error('Invalid EAS key given! Invalid characters or length (16,24,32 length)');
         }
 
         this.encryptionKey = encryptionKey;
@@ -134,7 +135,7 @@ export default class Session {
     public async setEncryptionKey(encryptionKey: string): Promise<boolean> {
         // validate the key
         if (!validateKey(encryptionKey)) {
-            throw new Error("Invalid EAS key given! Invalid characters or length (16,24,32 length)");
+            throw new Error('Invalid EAS key given! Invalid characters or length (16,24,32 length)');
         }
 
         this.encryptionKey = encryptionKey;
@@ -157,7 +158,7 @@ export default class Session {
         }
 
         // check if we are in a CI environment
-        if (typeof process !== "undefined" && process.env.ENV_CI === "true" && ignoreCi === false) {
+        if (typeof process !== 'undefined' && process.env.ENV_CI === 'true' && ignoreCi === false) {
             // use the stored CI variables instead of creating a new on
             this.publicKeyPem = process.env.CI_PUBLIC_KEY_PEM;
             this.privateKeyPem = process.env.CI_PRIVATE_KEY_PEM;
@@ -183,13 +184,13 @@ export default class Session {
      * @returns {Promise.<boolean>}
      */
     public async loadSession() {
-        this.logger.debug(" === Loading session data === " + this.storageKeyLocation);
+        this.logger.debug(' === Loading session data === ' + this.storageKeyLocation);
         // try to load the session interface
         const encryptedSession = await this.asyncStorageGet(this.storageKeyLocation);
 
         // no session found stored
         if (encryptedSession === undefined || encryptedSession === null) {
-            this.logger.debug("No stored session found");
+            this.logger.debug('No stored session found');
             return false;
         }
 
@@ -198,7 +199,7 @@ export default class Session {
             // decrypt the stored sesion
             session = await this.decryptSession(encryptedSession);
         } catch (error) {
-            this.logger.debug("Failed to decrypt session");
+            this.logger.debug('Failed to decrypt session');
             this.logger.debug(error);
             // failed to decrypt the session, return false
             return false;
@@ -206,13 +207,13 @@ export default class Session {
 
         // api keys dont match, this session is outdated
         if (this.apiKey !== false && this.apiKey !== null && session.apiKey !== this.apiKey) {
-            this.logger.debug("Api key changed or is different (api key could be empty)");
+            this.logger.debug('Api key changed or is different (api key could be empty)');
             return false;
         }
 
         // different environment stored, destroy old session
         if (session.environment !== this.environment) {
-            this.logger.debug("Environment changed, delete existing session");
+            this.logger.debug('Environment changed, delete existing session');
             await this.destroySession();
             return false;
         }
@@ -255,12 +256,8 @@ export default class Session {
         }
 
         try {
-            this.logger.debug(
-                `sessionToken: ${session.sessionToken === null ? null : session.sessionToken.substring(0, 5)}`
-            );
-            this.logger.debug(
-                `installToken: ${session.installToken === null ? null : session.installToken.substring(0, 5)}`
-            );
+            this.logger.debug(`sessionToken: ${session.sessionToken === null ? null : session.sessionToken.substring(0, 5)}`);
+            this.logger.debug(`installToken: ${session.installToken === null ? null : session.installToken.substring(0, 5)}`);
         } catch (error) {}
 
         return true;
@@ -285,7 +282,7 @@ export default class Session {
             sessionExpiryTime: this.sessionExpiryTime,
             sessionTimeout: this.sessionTimeout,
             userInfo: this.userInfo,
-            deviceId: this.deviceId
+            deviceId: this.deviceId,
         };
         const serializedData = JSON.stringify(dataToStore);
 
@@ -301,7 +298,7 @@ export default class Session {
         this.logger.debug(` -> #destroySession() `);
 
         this.apiKey = null;
-        this.userInfo = {};
+        this.userInfo = null;
 
         await this.destroyApiSession();
         await this.destroyApiInstallation();
@@ -317,7 +314,7 @@ export default class Session {
      */
     public async destroyInstallationMemory() {
         this.logger.debug(` -> #destroyInstallationMemory() `);
-        this.userInfo = {};
+        this.userInfo = null;
         this.sessionId = null;
         this.sessionToken = null;
         this.sessionTokenId = null;
@@ -345,7 +342,7 @@ export default class Session {
     public async destroyApiSession(save: boolean = false) {
         this.logger.debug(` -> #destroyApiSession(${save}) `);
 
-        this.userInfo = {};
+        this.userInfo = null;
         this.sessionId = null;
         this.sessionToken = null;
         this.sessionTokenId = null;
@@ -398,7 +395,7 @@ export default class Session {
         const IV = await this.asyncStorageGet(this.storageIvLocation);
 
         if (this.encryptionKey === false) {
-            throw new Error("No encryption key is set, failed to decrypt session");
+            throw new Error('No encryption key is set, failed to decrypt session');
         }
 
         // attempt to decrypt the string
@@ -470,7 +467,7 @@ export default class Session {
         }
 
         if (this.encryptionKey === false) {
-            throw new Error("No encryption key is set, failed to decrypt data");
+            throw new Error('No encryption key is set, failed to decrypt data');
         }
 
         // attempt to decrypt the data
@@ -536,14 +533,12 @@ export default class Session {
      * @returns {boolean}
      */
     public verifyInstallation(): boolean {
-        this.logger.debug(" === Testing installation === ");
+        this.logger.debug(' === Testing installation === ');
         const installationValid = this.serverPublicKey !== null && this.installToken !== null;
 
-        this.logger.debug("Installation valid: " + installationValid);
-        this.logger.debug("this.serverPublicKey = " + this.serverPublicKey);
-        this.logger.debug(
-            `this.installToken = ${this.installToken === null ? null : this.installToken.substring(0, 5)}`
-        );
+        this.logger.debug('Installation valid: ' + installationValid);
+        this.logger.debug('this.serverPublicKey = ' + this.serverPublicKey);
+        this.logger.debug(`this.installToken = ${this.installToken === null ? null : this.installToken.substring(0, 5)}`);
 
         return installationValid;
     }
@@ -553,11 +548,11 @@ export default class Session {
      * @returns {boolean}
      */
     public verifyDeviceInstallation(): boolean {
-        this.logger.debug(" === Testing device installation === ");
+        this.logger.debug(' === Testing device installation === ');
         const deviceValid = this.deviceId !== null;
 
-        this.logger.debug("Device valid: " + deviceValid);
-        this.logger.debug("this.deviceId: " + this.deviceId);
+        this.logger.debug('Device valid: ' + deviceValid);
+        this.logger.debug('this.deviceId: ' + this.deviceId);
 
         return deviceValid;
     }
@@ -568,7 +563,7 @@ export default class Session {
      */
     public verifySessionInstallation(): boolean {
         if (this.sessionId === null) {
-            this.logger.debug(" === Session invalid: sessionId null === ");
+            this.logger.debug(' === Session invalid: sessionId null === ');
             return false;
         }
 
@@ -584,9 +579,9 @@ export default class Session {
     public verifySessionExpiry(): boolean {
         const currentTime = new Date();
         if (this.sessionExpiryTime.getTime() <= currentTime.getTime()) {
-            this.logger.debug(" === Session invalid: expired === ");
-            this.logger.debug("this.sessionExpiryTime.getTime() = " + this.sessionExpiryTime.getTime());
-            this.logger.debug("currentTime.getTime() = " + currentTime.getTime());
+            this.logger.debug(' === Session invalid: expired === ');
+            this.logger.debug('this.sessionExpiryTime.getTime() = ' + this.sessionExpiryTime.getTime());
+            this.logger.debug('currentTime.getTime() = ' + currentTime.getTime());
             return false;
         }
         return true;
@@ -606,6 +601,6 @@ export default class Session {
             this.storageIvLocation = `BUNQJSCLIENT_${this.environment}_IV_${this.apiKeyIdentifier}`;
             return;
         }
-        throw new Error("Invalid enviroment given. " + JSON.stringify(ALLOWED_ENVIROMENTS));
+        throw new Error('Invalid enviroment given. ' + JSON.stringify(ALLOWED_ENVIROMENTS));
     }
 }

@@ -1,21 +1,21 @@
-import axios, { AxiosInstance } from "axios";
-import BunqJSClient from "./BunqJSClient";
-import Session from "./Session";
-import LoggerInterface from "./Interfaces/LoggerInterface";
-import CustomError from "./Interfaces/CustomError";
-import ApiAdapterOptions from "./Types/ApiAdapterOptions";
-import { Method } from "./Types/Method";
-import Headers from "./Types/Headers";
-import RequestLimitFactory from "./RequestLimitFactory";
-import Request from "./HTTP/Request";
-import SignRequestHandler from "./HTTP/SignRequestHandler";
-import EncryptRequestHandler from "./HTTP/EncryptRequestHandler";
-import VerifyResponseHandler from "./HTTP/VerifyResponseHandler";
-import ErrorCodes from "./Helpers/ErrorCodes";
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import BunqJSClient from './BunqJSClient';
+import Session from './Session';
+import LoggerInterface from './Interfaces/LoggerInterface';
+import CustomError from './Interfaces/CustomError';
+import ApiAdapterOptions from './Types/ApiAdapterOptions';
+import { Method } from './Types/Method';
+import Headers from './Types/Headers';
+import RequestLimitFactory from './RequestLimitFactory';
+import Request from './HTTP/Request';
+import SignRequestHandler from './HTTP/SignRequestHandler';
+import EncryptRequestHandler from './HTTP/EncryptRequestHandler';
+import VerifyResponseHandler from './HTTP/VerifyResponseHandler';
+import ErrorCodes from './Helpers/ErrorCodes';
 
-export const BUNQ_SERVER_SIGNATURE_HEADER_KEY = "X-Bunq-Server-Signature";
-export const BUNQ_REQUEST_SIGNATURE_HEADER_KEY = "X-Bunq-Client-Signature";
-export const BUNQ_REQUEST_AUTHENTICATION_HEADER_KEY = "X-Bunq-Client-Authentication";
+export const BUNQ_SERVER_SIGNATURE_HEADER_KEY = 'X-Bunq-Server-Signature';
+export const BUNQ_REQUEST_SIGNATURE_HEADER_KEY = 'X-Bunq-Client-Signature';
+export const BUNQ_REQUEST_AUTHENTICATION_HEADER_KEY = 'X-Bunq-Client-Authentication';
 
 export default class ApiAdapter {
     public Session: Session;
@@ -41,9 +41,9 @@ export default class ApiAdapter {
         this.EncryptRequestHandler = new EncryptRequestHandler(this.Session, this.logger, this.BunqJSClient);
         this.VerifyResponseHandler = new VerifyResponseHandler(this.Session, this.logger, this.BunqJSClient);
 
-        this.language = "en_US";
-        this.region = "nl_NL";
-        this.geoLocation = "0 0 0 0 000";
+        this.language = 'en_US';
+        this.region = 'nl_NL';
+        this.geoLocation = '0 0 0 0 000';
     }
 
     public async setup() {}
@@ -55,13 +55,8 @@ export default class ApiAdapter {
      * @param {AxiosInstance | false} axiosInstance
      * @returns {Promise<void>}
      */
-    public async get(
-        url: string,
-        headers: any = {},
-        options: ApiAdapterOptions = {},
-        axiosInstance: AxiosInstance | false = false
-    ) {
-        const response = await this.request(url, "GET", "", headers, options, axiosInstance);
+    public async get(url: string, headers: any = {}, options: ApiAdapterOptions = {}, axiosInstance: AxiosInstance | false = false) {
+        const response = await this.request(url, 'GET', '', headers, options, axiosInstance);
         return response.data;
     }
 
@@ -72,13 +67,8 @@ export default class ApiAdapter {
      * @param {AxiosInstance | false} axiosInstance
      * @returns {Promise<void>}
      */
-    public async delete(
-        url: string,
-        headers: any = {},
-        options: ApiAdapterOptions = {},
-        axiosInstance: AxiosInstance | false = false
-    ) {
-        const response = await this.request(url, "DELETE", {}, headers, options, axiosInstance);
+    public async delete(url: string, headers: any = {}, options: ApiAdapterOptions = {}, axiosInstance: AxiosInstance | false = false) {
+        const response = await this.request(url, 'DELETE', {}, headers, options, axiosInstance);
         return response.data;
     }
 
@@ -90,14 +80,8 @@ export default class ApiAdapter {
      * @param {AxiosInstance | false} axiosInstance
      * @returns {Promise<void>}
      */
-    public async post(
-        url: string,
-        data: any = {},
-        headers: any = {},
-        options: ApiAdapterOptions = {},
-        axiosInstance: AxiosInstance | false = false
-    ) {
-        const response = await this.request(url, "POST", data, headers, options, axiosInstance);
+    public async post(url: string, data: any = {}, headers: any = {}, options: ApiAdapterOptions = {}, axiosInstance: AxiosInstance | false = false) {
+        const response = await this.request(url, 'POST', data, headers, options, axiosInstance);
         return response.data;
     }
 
@@ -109,14 +93,8 @@ export default class ApiAdapter {
      * @param {AxiosInstance | false} axiosInstance
      * @returns {Promise<void>}
      */
-    public async put(
-        url: string,
-        data: any = {},
-        headers: any = {},
-        options: ApiAdapterOptions = {},
-        axiosInstance: AxiosInstance | false = false
-    ) {
-        const response = await this.request(url, "PUT", data, headers, options, axiosInstance);
+    public async put(url: string, data: any = {}, headers: any = {}, options: ApiAdapterOptions = {}, axiosInstance: AxiosInstance | false = false) {
+        const response = await this.request(url, 'PUT', data, headers, options, axiosInstance);
         return response.data;
     }
 
@@ -131,7 +109,7 @@ export default class ApiAdapter {
      */
     public async request(
         url: string,
-        method: Method = "GET",
+        method: Method = 'GET',
         data: any = {},
         headers: Headers = {},
         options: ApiAdapterOptions = {},
@@ -148,8 +126,7 @@ export default class ApiAdapter {
             transformResponse: (r) => r,
         };
 
-
-        const paramsString = options.axiosOptions.params ? JSON.stringify(options.axiosOptions.params) : "";
+        const paramsString = options.axiosOptions.params ? JSON.stringify(options.axiosOptions.params) : '';
         this.logger.debug(`${method}: ${url} ${paramsString}`);
 
         const request = new Request(url, method, data, headers, options.axiosOptions);
@@ -176,11 +153,11 @@ export default class ApiAdapter {
         }
 
         // complete relative urls
-        if (request.url[0] === "/") {
+        if (request.url[0] === '/') {
             request.setUrl(`${this.Session.environmentUrl}${request.url}`);
         }
 
-        let response;
+        let response: AxiosResponse;
         try {
             response = await axiosInstance.request(request.requestConfig);
         } catch (error) {
@@ -190,19 +167,17 @@ export default class ApiAdapter {
         if (options.disableVerification !== true) {
             const verifyResult = await this.VerifyResponseHandler.verifyResponse(response);
 
-            if (!verifyResult && (!process.env.ENV_CI || process.env.ENV_CI === "false")) {
+            if (!verifyResult && (!process.env.ENV_CI || process.env.ENV_CI === 'false')) {
                 // invalid response in a non-ci environment
-                throw new CustomError(
-                    "We couldn't verify the received response",
-                    response,
-                    ErrorCodes.INVALID_RESPONSE_RECEIVED
-                );
+                throw new CustomError("We couldn't verify the received response", response, ErrorCodes.INVALID_RESPONSE_RECEIVED);
             }
         }
 
         try {
             // attempt to turn string result back into json when possible
-            response.data = JSON.parse(response.data);
+            if (!options.axiosOptions?.responseType) {
+                response.data = JSON.parse(response.data);
+            }
             return response;
         } catch (error) {}
 
@@ -252,11 +227,12 @@ export default class ApiAdapter {
     private requestErrorHandler(error) {
         // get the data from the request if it fails
         if (error.response && error.response.data) {
+            console.error(`BUNQ ERROR (${error.response.status} - ${error.response.statusText})`);
             // parse json response if possible
             try {
                 // attempt to turn string result back into json when possible
                 error.response.data = JSON.parse(error.response.data);
-
+                console.error(error.response.data);
                 throw error;
             } catch (error) {}
         }

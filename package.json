@@ -16,7 +16,7 @@
     },
     "scripts": {
         "build": "tsc --listFiles --newline lf",
-        "build:dev": "tsc -w --newline lf",
+        "build:dev": "tsc --listFiles -w --newline lf",
         "test": "npm run test:prettier && npm run test:jest",
         "posttest": "rm -r tests/custom-db/*",
         "test:dev": "cross-env ENV_CI=true DEV_MODE=true jest --watch --coverage --config jest.config.js",

@@ -1,7 +1,7 @@
 import ApiAdapter from '../ApiAdapter';
 import Session from '../Session';
 import ApiEndpointInterface from '../Interfaces/ApiEndpointInterface';
-import { inspect } from 'util';
+import DeviceServer from '../Types/DeviceServer';
 
 export default class DeviceRegistration implements ApiEndpointInterface {
     ApiAdapter: ApiAdapter;
@@ -41,9 +41,7 @@ export default class DeviceRegistration implements ApiEndpointInterface {
                 axiosClient
             )
         );
-
         // return the device id
-        console.log(JSON.stringify(inspect(response, { depth: 4 })));
         return response.Response[0].Id.id;
     }
 
@@ -62,14 +60,20 @@ export default class DeviceRegistration implements ApiEndpointInterface {
 
         if (options) {
             const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server/${options.deviceId}`, {}, {}, axiosClient));
-            console.log(response.Response[0]);
-            // return the device id
-            return response.Response[0].DeviceServer.id;
+            // console.log(response.Response[0]);
+            // return the device server
+            return response.Response[0].DeviceServer as DeviceServer;
         } else {
             const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server`, {}, {}, axiosClient));
-            console.log(response.Response);
-            // return the device id
-            return response.Response;
+            // return the device servers
+            return response.Response as DeviceServer[];
         }
+    }
+
+    public async getAll(options?: any) {
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/device-server', 'GET');
+        const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/device-server`, {}, {}, axiosClient));
+        // return the device servers
+        return response.Response as DeviceServer[];
     }
 }

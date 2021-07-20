@@ -169,14 +169,13 @@ export default class BunqJSClient {
                 // update storage
                 await this.Session.storeSession();
             } catch (error) {
-                console.log('SOMETHING WENT WRONG IN BunqJSClient.registerDevice');
                 if (!error.response) {
                     throw error;
                 }
                 const response = error.response;
-                console.log(JSON.stringify(inspect(response)));
 
                 if (response.status === 400) {
+                    // Typically, this means that the used apiKey is not registered for the current IP address
                     // we have a permission/formatting issue, destroy the installation
                     this.Session.serverPublicKeyPem = null;
                     this.Session.serverPublicKey = null;
