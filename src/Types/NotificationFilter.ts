@@ -1,7 +1,18 @@
+import { ShareInviteBankResponse } from './DraftShareInviteBank';
+
 type NotificationFilter = {
     notification_delivery_method?: 'URL' | 'PUSH';
     notification_target: string | null;
     category: NotificationCategory;
+};
+
+export type NotificationUrl = {
+    target_url: string;
+    category: NotificationCategory;
+    event_type: 'SHARE_INVITE_BANK_RESPONSE_CREATED';
+    object: {
+        ShareInviteBankResponse: ShareInviteBankResponse;
+    };
 };
 
 export type NotificationCategory =

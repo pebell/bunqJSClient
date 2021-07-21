@@ -30,6 +30,18 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
         return response.Response[0];
     }
 
+    public async cancel(draftShareInviteBankId: number) {
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank', 'PUT');
+        const userId = this.Session.userInfo.UserPerson.id;
+        const payload = {
+            status: 'CANCELLED',
+        };
+        const response = await limiter.run(async (axiosClient) =>
+            this.ApiAdapter.put(`/v1/user/${userId}/draft-share-invite-bank/${draftShareInviteBankId}`, payload, {}, {}, axiosClient)
+        );
+        return response.Response[0];
+    }
+
     public async getQRCode(draftShareInviteBankId: number, options: any = {}) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank/qr-code');
         const userId = this.Session.userInfo.UserPerson.id;
@@ -57,26 +69,25 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
         return response.Response.map((i) => i.DraftShareInviteBank) as DraftShareInviteBank[];
     }
 
-    public async postSharePayment(sharePaymentDetails: ShareDetailPayment, options: any = {}) {
+    public async postSharePayment(sharePaymentDetails: ShareDetailPayment, expiration: string) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank', 'POST');
         const userId = this.Session.userInfo.UserPerson.id;
-
         const payload = {
             status: 'ACTIVE',
-            expiration: '2021-07-21T18:25:43.511Z',
+            expiration,
             draft_share_settings: {
                 share_detail: {
                     ShareDetailPayment: sharePaymentDetails,
                 },
             },
         };
-        console.log(JSON.stringify(payload, null, 2));
+        // console.log(JSON.stringify(payload, null, 2));
         const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.post(`/v1/user/${userId}/draft-share-invite-bank`, payload, {}, {}, axiosClient)
         );
 
         // console.log(inspect(response.Response, { depth: 5 }));
         // console.log(response.data);
-        return response.Response as DraftShareInviteBank;
+        return response.Response[0].Id as { id: number };
     }
 }

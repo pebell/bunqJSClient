@@ -1,15 +1,22 @@
 type DraftShareInviteBank = {
-    status: 'USED' | 'PENDING' | 'CANCELLED';
+    id?: number;
+    created?: string;
+    updated?: string;
+    status: DraftShareInviteBankStatus;
     expiration: string;
     draft_share_settings: {
-        share_detail: {
-            ShareDetailPayment?: ShareDetailPayment;
-            ShareDetailReadonly?: ShareDetailReadonly;
-            ShareDetailDraftPayment?: ShareDetailDraftPayment;
-        };
+        share_detail: ShareDetail;
         start_date: string;
         end_date: string;
     };
+};
+
+export type DraftShareInviteBankStatus = 'USED' | 'PENDING' | 'CANCELLED' | 'ACCEPTED';
+
+export type ShareDetail = {
+    ShareDetailPayment?: ShareDetailPayment;
+    ShareDetailReadonly?: ShareDetailReadonly;
+    ShareDetailDraftPayment?: ShareDetailDraftPayment;
 };
 
 export type ShareDetailPayment = {
@@ -38,6 +45,26 @@ type ShareDetailDraftPayment = {
     view_balance: boolean;
     view_old_events: boolean;
     view_new_events: boolean;
+};
+
+export type ShareInviteBankResponse = {
+    id: number;
+    created: string;
+    updated: string;
+    draft_share_invite_bank_id: number;
+    monetary_account_id: number;
+    counter_alias: {
+        iban: string;
+        is_light: boolean;
+        display_name: string;
+    };
+    user_alias_cancelled: null;
+    description: string;
+    share_type: 'STANDARD';
+    status: DraftShareInviteBankStatus;
+    share_detail: ShareDetail;
+    start_date: string;
+    end_date: string | null;
 };
 
 export default DraftShareInviteBank;
