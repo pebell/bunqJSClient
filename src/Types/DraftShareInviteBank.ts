@@ -4,6 +4,7 @@ type DraftShareInviteBank = {
     updated?: string;
     status: DraftShareInviteBankStatus;
     expiration: string;
+    draft_share_url?: string;
     draft_share_settings: {
         share_detail: ShareDetail;
         start_date: string;

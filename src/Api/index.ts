@@ -39,7 +39,7 @@ import SchedulePayment from './SchedulePayment';
 import SchedulePaymentBatch from './SchedulePaymentBatch';
 import SessionServer from './SessionServer';
 import ShareInviteMonetaryAccountInquiry from './ShareInviteMonetaryAccountInquiry';
-import ShareInviteMonetaryAccountResponse from './ShareInviteMonetaryAccountResponse';
+import ShareInviteMonetaryAccountResponseAPI from './ShareInviteMonetaryAccountResponseAPI';
 import User from './User';
 import UserCompany from './UserCompany';
 import UserPerson from './UserPerson';
@@ -84,7 +84,7 @@ export default (bunqJSClient): ApiEndpointCollection => ({
     schedulePaymentBatch: new SchedulePaymentBatch(bunqJSClient.ApiAdapter),
     sessionServer: new SessionServer(bunqJSClient.ApiAdapter),
     shareInviteMonetaryAccountInquiry: new ShareInviteMonetaryAccountInquiry(bunqJSClient.ApiAdapter),
-    shareInviteMonetaryAccountResponse: new ShareInviteMonetaryAccountResponse(bunqJSClient.ApiAdapter),
+    shareInviteMonetaryAccountResponse: new ShareInviteMonetaryAccountResponseAPI(bunqJSClient.ApiAdapter),
     user: new User(bunqJSClient.ApiAdapter),
     userCompany: new UserCompany(bunqJSClient.ApiAdapter),
     userPerson: new UserPerson(bunqJSClient.ApiAdapter),

@@ -37,7 +37,7 @@ import SchedulePayment from '../Api/SchedulePayment';
 import SchedulePaymentBatch from '../Api/SchedulePaymentBatch';
 import SessionServer from '../Api/SessionServer';
 import ShareInviteMonetaryAccountInquiry from '../Api/ShareInviteMonetaryAccountInquiry';
-import ShareInviteMonetaryAccountResponse from '../Api/ShareInviteMonetaryAccountResponse';
+import ShareInviteMonetaryAccountResponseAPI from '../Api/ShareInviteMonetaryAccountResponseAPI';
 import User from '../Api/User';
 import UserCompany from '../Api/UserCompany';
 import UserPerson from '../Api/UserPerson';
@@ -82,7 +82,7 @@ export default interface ApiEndpointCollection {
     schedulePaymentBatch: SchedulePaymentBatch;
     sessionServer: SessionServer;
     shareInviteMonetaryAccountInquiry: ShareInviteMonetaryAccountInquiry;
-    shareInviteMonetaryAccountResponse: ShareInviteMonetaryAccountResponse;
+    shareInviteMonetaryAccountResponse: ShareInviteMonetaryAccountResponseAPI;
     user: User;
     userCompany: UserCompany;
     userPerson: UserPerson;

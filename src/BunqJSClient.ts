@@ -9,7 +9,7 @@ import ApiAdapter from './ApiAdapter';
 import Session from './Session';
 import LocalstorageStore from './Stores/LocalstorageStore';
 
-import StorageInteface from './Interfaces/StorageInterface';
+import StorageInterface from './Interfaces/StorageInterface';
 import LoggerInterface from './Interfaces/LoggerInterface';
 import ApiEndpointCollection from './Interfaces/ApiEndpointCollection';
 
@@ -20,7 +20,7 @@ import { inspect } from 'util';
 const FIVE_MINUTES_MS = 300000;
 
 export default class BunqJSClient {
-    public storageInterface: StorageInteface;
+    public storageInterface: StorageInterface;
     public logger: LoggerInterface;
     public apiKey: string | false = false;
 
@@ -55,7 +55,7 @@ export default class BunqJSClient {
      * @param {StorageInterface|false} storageInterface
      * @param {LoggerInterface} loggerInterface
      */
-    constructor(storageInterface: StorageInteface | false = false, loggerInterface: LoggerInterface = Logger) {
+    constructor(storageInterface: StorageInterface | false = false, loggerInterface: LoggerInterface = Logger) {
         if (storageInterface === false) {
             if (typeof navigator === 'undefined') {
                 // NodeJS environment with no custom store defined

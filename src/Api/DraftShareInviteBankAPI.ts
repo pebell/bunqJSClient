@@ -27,7 +27,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
         const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.get(`/v1/user/${userId}/draft-share-invite-bank/${draftShareInviteBankId}`, {}, {}, axiosClient)
         );
-        return response.Response[0];
+        return response.Response[0].DraftShareInviteBank as DraftShareInviteBank;
     }
 
     public async cancel(draftShareInviteBankId: number) {
@@ -69,7 +69,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
         return response.Response.map((i) => i.DraftShareInviteBank) as DraftShareInviteBank[];
     }
 
-    public async postSharePayment(sharePaymentDetails: ShareDetailPayment, expiration: string) {
+    public async createShareInvite(sharePaymentDetails: ShareDetailPayment, expiration: string) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank', 'POST');
         const userId = this.Session.userInfo.UserPerson.id;
         const payload = {

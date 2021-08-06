@@ -1,3 +1,4 @@
+import { Payment } from './Payment';
 import { ShareInviteBankResponse } from './DraftShareInviteBank';
 
 type NotificationFilter = {
@@ -6,12 +7,32 @@ type NotificationFilter = {
     category: NotificationCategory;
 };
 
-export type NotificationUrl = {
+// export type NotificationUrl = {
+//     target_url: string;
+//     category: NotificationCategory;
+//     event_type: 'SHARE_INVITE_BANK_RESPONSE_CREATED' | 'SHARE_INVITE_BANK_RESPONSE_CANCELLED' | 'SHARE_INVITE_BANK_RESPONSE_REVOKED';
+//     object: {
+//         ShareInviteBankResponse: ShareInviteBankResponse;
+//     };
+// };
+
+export type NotificationUrl = NotificationUrlShare | NotificationUrlMutation;
+
+export type NotificationUrlShare = {
     target_url: string;
-    category: NotificationCategory;
-    event_type: 'SHARE_INVITE_BANK_RESPONSE_CREATED';
+    category: 'SHARE';
+    event_type: 'SHARE_INVITE_BANK_RESPONSE_CREATED' | 'SHARE_INVITE_BANK_RESPONSE_CANCELLED' | 'SHARE_INVITE_BANK_RESPONSE_REVOKED';
     object: {
         ShareInviteBankResponse: ShareInviteBankResponse;
+    };
+};
+
+export type NotificationUrlMutation = {
+    target_url: string;
+    category: 'MUTATION';
+    event_type: 'MUTATION_CREATED' | 'MUTATION_RECEIVED';
+    object: {
+        Payment: Payment;
     };
 };
 
