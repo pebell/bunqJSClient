@@ -22,7 +22,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
      */
     public async get(draftShareInviteBankId: number, options: any = {}) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank');
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
 
         const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.get(`/v1/user/${userId}/draft-share-invite-bank/${draftShareInviteBankId}`, {}, {}, axiosClient)
@@ -32,7 +32,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
 
     public async cancel(draftShareInviteBankId: number) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank', 'PUT');
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
         const payload = {
             status: 'CANCELLED',
         };
@@ -44,7 +44,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
 
     public async getQRCode(draftShareInviteBankId: number, options: any = {}) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank/qr-code');
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
         const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.get(
                 `/v1/user/${userId}/draft-share-invite-bank/${draftShareInviteBankId}/qr-code-content`,
@@ -61,7 +61,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
 
     public async getAll(options: any = {}) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank');
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
 
         const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/user/${userId}/draft-share-invite-bank`, {}, {}, axiosClient));
         // console.log(JSON.stringify(response.Response, null, 2));
@@ -71,7 +71,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
 
     public async createShareInvite(sharePaymentDetails: ShareDetailPayment, expiration: string) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank', 'POST');
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
         const payload = {
             status: 'ACTIVE',
             expiration,

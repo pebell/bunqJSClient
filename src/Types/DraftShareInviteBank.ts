@@ -5,6 +5,7 @@ type DraftShareInviteBank = {
     status: DraftShareInviteBankStatus;
     expiration: string;
     draft_share_url?: string;
+    share_invite_bank_response_id?: number;
     draft_share_settings: {
         share_detail: ShareDetail;
         start_date: string;

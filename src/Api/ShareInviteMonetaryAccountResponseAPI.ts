@@ -24,7 +24,7 @@ export default class ShareInviteMonetaryAccountResponseAPI implements ApiEndpoin
      * @returns {Promise<void>}
      */
     public async get(shareInviteMonetaryAccountResponseId: number): Promise<ShareInviteMonetaryAccountResponse> {
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/share-invite-monetary-account-response', 'GET');
 
         const response = await limiter.run(async (axiosClient) =>
@@ -46,7 +46,7 @@ export default class ShareInviteMonetaryAccountResponseAPI implements ApiEndpoin
             older_id: false,
         }
     ): Promise<ShareInviteMonetaryAccountResponse[]> {
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
         const params: any = {};
 
         if (options.count !== undefined) {
@@ -83,7 +83,7 @@ export default class ShareInviteMonetaryAccountResponseAPI implements ApiEndpoin
      * @returns {Promise<{}>}
      */
     public async put(shareInviteMonetaryAccountResponseId: number, status: ShareInviteMonetaryAccountResponsePutStatus): Promise<any> {
-        const userId = this.Session.userInfo.UserPerson.id;
+        const userId = this.Session.getUserId();
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/share-invite-monetary-account-response', 'PUT');
 
         const response = await limiter.run(async (axiosClient) =>

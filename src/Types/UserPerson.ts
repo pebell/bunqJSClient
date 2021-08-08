@@ -2,7 +2,7 @@ import AddressDetails from './AddressDetails';
 import NotificationFilter from './NotificationFilter';
 
 type UserPerson = {
-    id: 0;
+    id: number;
     created: string;
     updated: string;
     public_uuid: string;

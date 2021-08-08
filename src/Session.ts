@@ -49,7 +49,7 @@ export default class Session {
     public sessionExpiryTime?: Date = null;
     public sessionTimeout: number = 0;
     public sessionExpiryTimeChecker?: any = null;
-    public userInfo: { UserPerson: UserPerson } = null;
+    public userInfo: { UserPerson?: UserPerson; UserCompany?: UserPerson } = null; // TODO: UserCompany <> UserPerson, moet nog in types verwerkt worden blijkbaar.
 
     // key used to store our data
     public storageKeyLocation: string;
@@ -60,6 +60,32 @@ export default class Session {
         this.logger = loggerInterface;
 
         this.environmentType = 'SANDBOX';
+    }
+
+    getUser() {
+        if (!this.userInfo) {
+            throw new Error('No userInfo present on this session!');
+        }
+        if (this.userInfo.UserPerson) {
+            return this.userInfo.UserPerson;
+        }
+        if (this.userInfo.UserCompany) {
+            return this.userInfo.UserCompany;
+        }
+        throw new Error('No UserPerson or UserCompany in userInfo');
+    }
+
+    getUserId() {
+        if (!this.userInfo) {
+            throw new Error('No userInfo present on this session!');
+        }
+        if (this.userInfo.UserPerson) {
+            return this.userInfo.UserPerson.id;
+        }
+        if (this.userInfo.UserCompany) {
+            return this.userInfo.UserCompany.id;
+        }
+        throw new Error('No UserPerson or UserCompany in userInfo');
     }
 
     /**
