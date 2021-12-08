@@ -1,9 +1,9 @@
-import ApiAdapter from "../ApiAdapter";
-import Session from "../Session";
-import ApiEndpointInterface from "../Interfaces/ApiEndpointInterface";
-import PaginationOptions from "../Types/PaginationOptions";
-import AmountValue from "../Types/AmountValue";
-import MonetaryAccountPutRequest from "../Types/MonetaryAccountPutRequest";
+import ApiAdapter from '../ApiAdapter';
+import Session from '../Session';
+import ApiEndpointInterface from '../Interfaces/ApiEndpointInterface';
+import PaginationOptions from '../Types/PaginationOptions';
+import AmountValue from '../Types/AmountValue';
+import MonetaryAccountPutRequest from '../Types/MonetaryAccountPutRequest';
 
 export default class MonetaryAccountBank implements ApiEndpointInterface {
     ApiAdapter: ApiAdapter;
@@ -23,19 +23,15 @@ export default class MonetaryAccountBank implements ApiEndpointInterface {
      * @param options
      * @returns {Promise<any>}
      */
-    public async get(userId: number, monetaryAccountBankId: number, options: any = {}) {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/monetary-account-bank", "GET");
+    public async get(monetaryAccountBankId: number, options: any = {}) {
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/monetary-account-bank', 'GET');
+        const userId = this.Session.getUserId();
 
-        const response = await limiter.run(async axiosClient =>
-            this.ApiAdapter.get(
-                `/v1/user/${userId}/monetary-account-bank/${monetaryAccountBankId}`,
-                {},
-                {},
-                axiosClient
-            )
+        const response = await limiter.run(async (axiosClient) =>
+            this.ApiAdapter.get(`/v1/user/${userId}/monetary-account-bank/${monetaryAccountBankId}`, {}, {}, axiosClient)
         );
 
-        return response.Response[0];
+        return response.Response.map((v) => v.MonetaryAccountBank)[0];
     }
 
     /**
@@ -48,16 +44,14 @@ export default class MonetaryAccountBank implements ApiEndpointInterface {
         options: PaginationOptions = {
             count: 25,
             newer_id: false,
-            older_id: false
+            older_id: false,
         }
     ) {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/monetary-account-bank", "LIST");
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/monetary-account-bank', 'LIST');
 
-        const response = await limiter.run(async axiosClient =>
-            this.ApiAdapter.get(`/v1/user/${userId}/monetary-account-bank`, {}, {}, axiosClient)
-        );
+        const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/user/${userId}/monetary-account-bank`, {}, {}, axiosClient));
 
-        return response.Response;
+        return response.Response.map((v) => v.MonetaryAccountBank);
     }
 
     /**
@@ -69,30 +63,23 @@ export default class MonetaryAccountBank implements ApiEndpointInterface {
      * @param options
      * @returns {Promise<void>}
      */
-    public async post(
-        userId: number,
-        currency: string,
-        description: string,
-        dailyLimit: AmountValue,
-        color: string,
-        options: any = {}
-    ) {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/monetary-account-bank", "POST");
+    public async post(userId: number, currency: string, description: string, dailyLimit: AmountValue, color: string, options: any = {}) {
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/monetary-account-bank', 'POST');
 
-        const response = await limiter.run(async axiosClient =>
+        const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.post(
                 `/v1/user/${userId}/monetary-account-bank`,
                 {
                     currency: currency,
                     description: description,
                     daily_limit: {
-                        value: dailyLimit + "",
-                        currency: currency
+                        value: dailyLimit + '',
+                        currency: currency,
                     },
                     setting: {
                         color: color,
-                        default_avatar_status: "AVATAR_DEFAULT"
-                    }
+                        default_avatar_status: 'AVATAR_DEFAULT',
+                    },
                 },
                 {},
                 {},
@@ -110,22 +97,11 @@ export default class MonetaryAccountBank implements ApiEndpointInterface {
      * @param options
      * @returns {Promise<any>}
      */
-    public async put(
-        userId: number,
-        accountId: number,
-        monetaryAccountPutRequest: MonetaryAccountPutRequest,
-        options: any = {}
-    ) {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/monetary-account-bank", "PUT");
+    public async put(userId: number, accountId: number, monetaryAccountPutRequest: MonetaryAccountPutRequest, options: any = {}) {
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/monetary-account-bank', 'PUT');
 
-        const response = await limiter.run(async axiosClient =>
-            this.ApiAdapter.put(
-                `/v1/user/${userId}/monetary-account-bank/${accountId}`,
-                monetaryAccountPutRequest,
-                {},
-                {},
-                axiosClient
-            )
+        const response = await limiter.run(async (axiosClient) =>
+            this.ApiAdapter.put(`/v1/user/${userId}/monetary-account-bank/${accountId}`, monetaryAccountPutRequest, {}, {}, axiosClient)
         );
 
         return response.Response;
@@ -140,24 +116,17 @@ export default class MonetaryAccountBank implements ApiEndpointInterface {
      * @param options
      * @returns {Promise<any>}
      */
-    public async putCancel(
-        userId: number,
-        accountId: number,
-        status: "CANCELLED",
-        sub_status: "REDEMPTION_VOLUNTARY",
-        reason: string,
-        options: any = {}
-    ) {
-        const limiter = this.ApiAdapter.RequestLimitFactory.create("/monetary-account-bank", "PUT");
+    public async putCancel(userId: number, accountId: number, status: 'CANCELLED', sub_status: 'REDEMPTION_VOLUNTARY', reason: string, options: any = {}) {
+        const limiter = this.ApiAdapter.RequestLimitFactory.create('/monetary-account-bank', 'PUT');
 
-        const response = await limiter.run(async axiosClient =>
+        const response = await limiter.run(async (axiosClient) =>
             this.ApiAdapter.put(
                 `/v1/user/${userId}/monetary-account-bank/${accountId}`,
                 {
                     status: status,
                     sub_status: sub_status,
-                    reason: "OTHER",
-                    reason_description: reason
+                    reason: 'OTHER',
+                    reason_description: reason,
                 },
                 {},
                 {},

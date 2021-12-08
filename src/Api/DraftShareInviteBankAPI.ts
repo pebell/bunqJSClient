@@ -3,6 +3,7 @@ import ApiAdapter from '../ApiAdapter';
 import ApiEndpointInterface from '../Interfaces/ApiEndpointInterface';
 import Session from '../Session';
 import DraftShareInviteBank, { ShareDetailPayment } from '../Types/DraftShareInviteBank';
+import PaginationOptions from '../Types/PaginationOptions';
 // import DraftShareInviteBank from '../Types/DraftShareInviteBank';
 
 export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
@@ -63,8 +64,25 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/draft-share-invite-bank');
         const userId = this.Session.getUserId();
 
-        const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/user/${userId}/draft-share-invite-bank`, {}, {}, axiosClient));
-        // console.log(JSON.stringify(response.Response, null, 2));
+        const opts: PaginationOptions = {
+            count: 200,
+            newer_id: undefined,
+            older_id: undefined,
+        };
+
+        const response = await limiter.run(async (axiosClient) =>
+            this.ApiAdapter.get(
+                `/v1/user/${userId}/draft-share-invite-bank`,
+                {},
+                {
+                    axiosOptions: {
+                        params: opts,
+                    },
+                },
+                axiosClient
+            )
+        );
+        console.log(JSON.stringify(response.Response, null, 2));
 
         return response.Response.map((i) => i.DraftShareInviteBank) as DraftShareInviteBank[];
     }

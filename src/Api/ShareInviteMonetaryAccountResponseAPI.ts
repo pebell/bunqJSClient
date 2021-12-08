@@ -4,6 +4,7 @@ import ApiEndpointInterface from '../Interfaces/ApiEndpointInterface';
 import PaginationOptions from '../Types/PaginationOptions';
 import { ShareInviteMonetaryAccountResponse, ShareInviteMonetaryAccountResponsePutStatus } from '../Types/ShareInviteMonetaryAccountResponse';
 import { inspect } from 'util';
+import { lstat } from 'fs';
 
 export default class ShareInviteMonetaryAccountResponseAPI implements ApiEndpointInterface {
     ApiAdapter: ApiAdapter;
@@ -32,6 +33,50 @@ export default class ShareInviteMonetaryAccountResponseAPI implements ApiEndpoin
         );
         // console.log(inspect(response, { depth: 6 }));
         return response.Response[0].ShareInviteMonetaryAccountResponse;
+    }
+
+    public async getForMonetaryAccount(monetary_account_id: number): Promise<ShareInviteMonetaryAccountResponse | undefined> {
+        // Only way seems to retrieve all until we find the right one
+
+        const options: PaginationOptions = {
+            count: 200,
+            newer_id: false,
+            older_id: false,
+        };
+        // console.log(`#### STARTING SEARCH FOR CONNECT FOR MONETARY ACCOUNT ${monetary_account_id}`);
+        let connect: ShareInviteMonetaryAccountResponse | undefined;
+        let connects = await this.list(options);
+        while (connects.length > 0) {
+            connect = connects.find((v) => v.monetary_account_id === monetary_account_id);
+            if (connect) break;
+            const oldestConnect = connects[connects.length - 1].id;
+            // console.log(`oldest:  ${oldestConnect}`);
+            options.older_id = oldestConnect;
+            connects = connects.length === options.count ? await this.list(options) : [];
+            // console.log(`end of loop, retrieved new batch older than ${options.older_id}, found ${connects.length} new entries`);
+        }
+        return connect;
+    }
+
+    public async getAll() {
+        // Only way seems to retrieve all until we find the right one
+        const options: PaginationOptions = {
+            count: 200,
+            newer_id: false,
+            older_id: false,
+        };
+        // console.log(`#### STARTING getAll`);
+        const allConnects: ShareInviteMonetaryAccountResponse[] = [];
+        let connects = await this.list(options);
+        while (connects.length > 0) {
+            allConnects.push(...connects);
+            const oldestConnect = connects[connects.length - 1].id;
+            // console.log(`oldest:  ${oldestConnect}`);
+            options.older_id = oldestConnect;
+            connects = connects.length === options.count ? await this.list(options) : [];
+            // console.log(`end of loop, retrieved new batch older than ${options.older_id}, found ${connects.length} new entries`);
+        }
+        return allConnects;
     }
 
     /**
@@ -73,6 +118,7 @@ export default class ShareInviteMonetaryAccountResponseAPI implements ApiEndpoin
                 axiosClient
             )
         );
+        // console.log(response.Pagination);
         return response.Response.map((v) => v.ShareInviteMonetaryAccountResponse);
     }
 
