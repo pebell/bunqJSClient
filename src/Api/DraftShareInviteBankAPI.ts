@@ -65,7 +65,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
         const userId = this.Session.getUserId();
 
         const opts: PaginationOptions = {
-            count: 200,
+            count: 50,
             newer_id: undefined,
             older_id: undefined,
         };
@@ -82,7 +82,7 @@ export default class DraftShareInviteBankAPI implements ApiEndpointInterface {
                 axiosClient
             )
         );
-        console.log(JSON.stringify(response.Response, null, 2));
+        // console.log(JSON.stringify(response.Response, null, 2));
 
         return response.Response.map((i) => i.DraftShareInviteBank) as DraftShareInviteBank[];
     }
