@@ -40,16 +40,25 @@ export default class MonetaryAccountBank implements ApiEndpointInterface {
      * @returns {Promise<void>}
      */
     public async list(
-        userId: number,
         options: PaginationOptions = {
-            count: 25,
-            newer_id: false,
-            older_id: false,
+            count: 10,
         }
     ) {
         const limiter = this.ApiAdapter.RequestLimitFactory.create('/monetary-account-bank', 'LIST');
+        const userId = this.Session.getUserId();
 
-        const response = await limiter.run(async (axiosClient) => this.ApiAdapter.get(`/v1/user/${userId}/monetary-account-bank`, {}, {}, axiosClient));
+        const response = await limiter.run(async (axiosClient) =>
+            this.ApiAdapter.get(
+                `/v1/user/${userId}/monetary-account-bank`,
+                {},
+                {
+                    axiosOptions: {
+                        params: options,
+                    },
+                },
+                axiosClient
+            )
+        );
 
         return response.Response.map((v) => v.MonetaryAccountBank);
     }
