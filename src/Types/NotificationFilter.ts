@@ -21,7 +21,11 @@ export type NotificationUrl = NotificationUrlShare | NotificationUrlMutation;
 export type NotificationUrlShare = {
     target_url: string;
     category: 'SHARE';
-    event_type: 'SHARE_INVITE_BANK_RESPONSE_CREATED' | 'SHARE_INVITE_BANK_RESPONSE_CANCELLED' | 'SHARE_INVITE_BANK_RESPONSE_REVOKED';
+    event_type:
+        | 'SHARE_INVITE_BANK_RESPONSE_CREATED'
+        | 'SHARE_INVITE_BANK_RESPONSE_CANCELLED'
+        | 'SHARE_INVITE_BANK_RESPONSE_REVOKED'
+        | 'SHARE_INVITE_BANK_RESPONSE_EXPIRED';
     object: {
         ShareInviteBankResponse: ShareInviteBankResponse;
     };
