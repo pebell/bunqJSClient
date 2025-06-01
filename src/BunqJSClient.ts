@@ -233,6 +233,7 @@ export default class BunqJSClient {
             this.logger.debug(' === Attempting to fetch session');
 
             response = await this.api.sessionServer.add();
+            this.logger.log(JSON.stringify(response, null, 2));
         } catch (error) {
             if (error.response && error.response.data.Error) {
                 const responseError = error.response.data.Error[0];
