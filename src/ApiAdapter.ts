@@ -138,8 +138,10 @@ export default class ApiAdapter {
         if (options.disableAuthentication !== true) {
             // use session token or fallback to install taken if we have one
             if (this.Session.sessionToken !== null) {
+                this.logger.log(`Setting sessionToken on request: ${this.Session.sessionToken}`);
                 request.setAuthenticated(this.Session.sessionToken);
             } else if (this.Session.installToken !== null) {
+                this.logger.log(`Setting installToken on request: ${this.Session.installToken}`);
                 request.setAuthenticated(this.Session.installToken);
             }
         }
