@@ -144,6 +144,8 @@ export default class ApiAdapter {
                 this.logger.log(`Setting installToken on request: ${this.Session.installToken}`);
                 request.setAuthenticated(this.Session.installToken);
             }
+        } else {
+            this.logger.warn('Authentication disabled!');
         }
 
         if (options.isEncrypted === true) {
