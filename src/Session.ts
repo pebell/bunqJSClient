@@ -210,7 +210,7 @@ export default class Session {
      * @returns {Promise.<boolean>}
      */
     public async loadSession() {
-        this.logger.debug(' === Loading session data from location: ' + this.storageKeyLocation);
+        this.logger.debug(' === Loading session data === location: ' + this.storageKeyLocation);
         // try to load the session interface
         const encryptedSession = await this.asyncStorageGet(this.storageKeyLocation);
 
